@@ -99,7 +99,7 @@ if st.session_state.step >= 3 and st.session_state.resume_optimized:
             st.download_button(
                 label="Download PDF",
                 data=pdf_bytes,
-                file_name="tailored_resume.pdf",
+                file_name="Jithin_Reghuvaran_CV.pdf",
                 mime="application/pdf",
             )
         except Exception as e:
