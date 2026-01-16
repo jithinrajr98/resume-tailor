@@ -13,9 +13,19 @@ MODEL = "llama-3.3-70b-versatile"
 
 def get_client() -> Groq:
     """Get Groq client instance."""
-    api_key = os.getenv("GROQ_API_KEY")
+    # Try st.secrets first (Streamlit Cloud), then fall back to env vars
+    api_key = None
+    try:
+        import streamlit as st
+        api_key = st.secrets.get("GROQ_API_KEY")
+    except Exception:
+        pass
+
     if not api_key:
-        raise ValueError("GROQ_API_KEY not found in environment variables")
+        api_key = os.getenv("GROQ_API_KEY")
+
+    if not api_key:
+        raise ValueError("GROQ_API_KEY not found in secrets or environment variables")
     return Groq(api_key=api_key)
 
 
