@@ -15,6 +15,30 @@ class ResumePDF(FPDF):
         self.add_page()
         self.set_margins(18, 15, 18)
 
+    def _add_bullet_point(self, text: str, indent: int = 23, bullet: str = "-"):
+        """Add a bullet point with proper text alignment for wrapped lines."""
+        # Save current left margin
+        original_left_margin = self.l_margin
+
+        # Calculate text start position (after bullet)
+        bullet_text = f"{bullet}  "
+        self.set_font("Helvetica", "", 10)
+        bullet_width = self.get_string_width(bullet_text)
+        text_start = indent + bullet_width
+
+        # Print bullet at indent position
+        self.set_x(indent)
+        self.cell(bullet_width, 5, bullet_text, ln=False)
+
+        # Set left margin so wrapped lines align with text start
+        self.set_left_margin(text_start)
+
+        # Print text (will wrap at new left margin)
+        self.multi_cell(0, 5, text, align="J")
+
+        # Restore original left margin
+        self.set_left_margin(original_left_margin)
+
     def add_header(self, name: str, contact: dict, title: str = ""):
         """Add name and contact information header."""
         # Name - Times Bold, ALL CAPS, centered
@@ -164,10 +188,8 @@ class ResumePDF(FPDF):
             self.ln(2)
 
             # Bullet points
-            self.set_font("Helvetica", "", 10)
             for bullet in exp.get("bullets", []):
-                self.set_x(23)
-                self.multi_cell(0, 5, f"- {bullet}", align="J")
+                self._add_bullet_point(bullet)
 
             self.ln(4)
 
@@ -197,10 +219,8 @@ class ResumePDF(FPDF):
                 self.multi_cell(0, 5, project["description"], align="J")
 
             # Bullet points
-            self.set_font("Helvetica", "", 10)
             for bullet in project.get("bullets", []):
-                self.set_x(23)
-                self.multi_cell(0, 5, f"- {bullet}", align="J")
+                self._add_bullet_point(bullet)
 
             self.ln(3)
 
@@ -270,11 +290,12 @@ def generate_pdf(resume_data: dict) -> bytes:
     """
     pdf = ResumePDF()
 
-    # Extract title from first experience if available
-    title = ""
-    experiences = resume_data.get("experience", [])
-    if experiences and experiences[0].get("title"):
-        title = experiences[0]["title"]
+    # Use professional_title if available, otherwise fall back to first job title
+    title = resume_data.get("professional_title", "")
+    if not title:
+        experiences = resume_data.get("experience", [])
+        if experiences and experiences[0].get("title"):
+            title = experiences[0]["title"]
 
     # Header with name and contact
     pdf.add_header(

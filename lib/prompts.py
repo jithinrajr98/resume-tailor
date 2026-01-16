@@ -7,6 +7,7 @@ Resume Text:
 
 Return a JSON object with these sections (only include sections that exist in the resume):
 - name: Full name
+- professional_title: Professional title/role (e.g., "Machine Learning Engineer", "Software Developer")
 - contact: Object with email, phone, location, linkedin, github, website (as available)
 - summary: Professional summary or objective (if present)
 - experience: Array of objects with company, title, dates, location, type (e.g., "Remote"), bullets (array of achievements)
@@ -28,12 +29,13 @@ Job Description:
 Instructions:
 1. Identify key skills, technologies, and requirements from the job description
 2. Enhance the resume by:
+   - Updating professional_title to match the target job role (e.g., if applying for "Machine Learning Engineer", use that as the professional_title)
    - Reordering skills to prioritize job-relevant ones first (skills should be a flat array of strings)
    - Adjusting bullet points to emphasize relevant experience (without fabricating)
    - Incorporating relevant keywords naturally where appropriate
    - Strengthening action verbs and quantifiable achievements
 3. Preserve:
-   - All factual information (dates, companies, titles, education, certifications)
+   - All factual information (dates, companies, job titles, education, certifications)
    - The overall structure and format
    - Professional tone
 4. Skills must be a flat array of strings, not categorized (e.g., ["Python", "AWS", "Docker"])
