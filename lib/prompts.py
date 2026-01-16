@@ -9,9 +9,9 @@ Return a JSON object with these sections (only include sections that exist in th
 - name: Full name
 - contact: Object with email, phone, location, linkedin, github, website (as available)
 - summary: Professional summary or objective (if present)
-- experience: Array of objects with company, title, dates, location, bullets (array of achievements)
-- education: Array of objects with institution, degree, field, dates, gpa (if mentioned)
-- skills: Object with categories as keys and arrays of skills as values (e.g., "Programming Languages": ["Python", "JavaScript"])
+- experience: Array of objects with company, title, dates, location, type (e.g., "Remote"), bullets (array of achievements)
+- education: Array of objects with institution, degree, field, location, dates, gpa (if mentioned)
+- skills: Array of skill strings as a flat list (e.g., ["Python", "JavaScript", "AWS", "Docker"])
 - projects: Array of objects with name, description, technologies, bullets (if present)
 - certifications: Array of objects with name, issuer, date (if present)
 
@@ -28,14 +28,16 @@ Job Description:
 Instructions:
 1. Identify key skills, technologies, and requirements from the job description
 2. Enhance the resume by:
-   - Reordering skills to prioritize relevant ones
+   - Reordering skills to prioritize job-relevant ones first (skills should be a flat array of strings)
    - Adjusting bullet points to emphasize relevant experience (without fabricating)
    - Incorporating relevant keywords naturally where appropriate
    - Strengthening action verbs and quantifiable achievements
 3. Preserve:
-   - All factual information (dates, companies, titles, education)
+   - All factual information (dates, companies, titles, education, certifications)
    - The overall structure and format
    - Professional tone
+4. Skills must be a flat array of strings, not categorized (e.g., ["Python", "AWS", "Docker"])
+5. Include certifications if present in the original resume
 
 Return the optimized resume as a JSON object with the same structure as the input.
 Return ONLY valid JSON, no markdown formatting or explanation."""
