@@ -5,7 +5,7 @@ import json
 from io import BytesIO
 
 from lib.pdf_parser import extract_text_from_pdf
-from lib.groq_client import structure_resume, optimize_resume
+from lib.groq_client import structure_resume, optimize_resume, translate_resume
 from lib.pdf_generator import generate_pdf
 
 # Page configuration
@@ -27,6 +27,8 @@ if "resume_optimized" not in st.session_state:
     st.session_state.resume_optimized = None
 if "step" not in st.session_state:
     st.session_state.step = 1
+if "resume_french" not in st.session_state:
+    st.session_state.resume_french = None
 
 # Step 1: Upload Resume
 st.header("1. Upload Resume")
@@ -66,6 +68,7 @@ if st.session_state.step >= 2:
                 st.session_state.resume_optimized = optimize_resume(
                     st.session_state.resume_structured, job_description
                 )
+                st.session_state.resume_french = None  # Reset French version
                 st.session_state.step = 3
             except Exception as e:
                 st.error(f"Error optimizing resume: {str(e)}")
@@ -93,17 +96,43 @@ if st.session_state.step >= 3 and st.session_state.resume_optimized:
     if edited_resume:
         st.header("4. Download Resume")
 
-        try:
-            pdf_bytes = generate_pdf(st.session_state.resume_optimized)
+        col1, col2 = st.columns(2)
 
-            st.download_button(
-                label="Download PDF",
-                data=pdf_bytes,
-                file_name="Jithin_Reghuvaran_CV.pdf",
-                mime="application/pdf",
-            )
-        except Exception as e:
-            st.error(f"Error generating PDF: {str(e)}")
+        with col1:
+            try:
+                pdf_bytes = generate_pdf(st.session_state.resume_optimized)
+                st.download_button(
+                    label="Download PDF (English)",
+                    data=pdf_bytes,
+                    file_name="Jithin_Reghuvaran_CV.pdf",
+                    mime="application/pdf",
+                )
+            except Exception as e:
+                st.error(f"Error generating PDF: {str(e)}")
+
+        with col2:
+            if st.session_state.resume_french is None:
+                if st.button("Generate French Version"):
+                    with st.spinner("Translating resume to French..."):
+                        try:
+                            st.session_state.resume_french = translate_resume(
+                                st.session_state.resume_optimized
+                            )
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error translating resume: {str(e)}")
+            else:
+                try:
+                    french_pdf_bytes = generate_pdf(st.session_state.resume_french)
+                    st.download_button(
+                        label="Download PDF (French)",
+                        data=french_pdf_bytes,
+                        file_name="Jithin_Reghuvaran_CV_FR.pdf",
+                        mime="application/pdf",
+                        key="french_pdf_download",
+                    )
+                except Exception as e:
+                    st.error(f"Error generating French PDF: {str(e)}")
 
 # Reset button
 if st.session_state.step > 1:
@@ -111,5 +140,6 @@ if st.session_state.step > 1:
         st.session_state.resume_text = None
         st.session_state.resume_structured = None
         st.session_state.resume_optimized = None
+        st.session_state.resume_french = None
         st.session_state.step = 1
         st.rerun()

@@ -7,7 +7,7 @@ Resume Text:
 
 Return a JSON object with these sections (only include sections that exist in the resume):
 - name: Full name
-- professional_title: Professional title/role (e.g., "Machine Learning Engineer", "Software Developer")
+- professional_title: Professional title/role using standard abbreviations (e.g., "ML Engineer", "AI Engineer", "Software Developer")
 - contact: Object with email, phone, location, linkedin, github, website (as available)
 - summary: Professional summary or objective (if present)
 - experience: Array of objects with company, title, dates, location, type (e.g., "Remote"), bullets (array of achievements)
@@ -30,7 +30,7 @@ Job Description:
 Instructions:
 1. Identify key skills, technologies, and requirements from the job description
 2. Enhance the resume by:
-   - Updating professional_title to match the target job role (e.g., if applying for "Machine Learning Engineer", use that as the professional_title)
+   - Updating professional_title to match the target job role using standard abbreviations (e.g., "ML Engineer" for machine learning roles, "AI Engineer" for artificial intelligence roles)
    - Reordering skills to prioritize job-relevant ones first (skills should be a flat array of strings)
    - Adjusting bullet points to emphasize relevant experience (without fabricating)
    - Incorporating relevant keywords naturally where appropriate
@@ -47,4 +47,17 @@ Instructions:
 6. Language quality: Vary action verbs across bullet points. Avoid filler words and repetitive phrasing. Each achievement should read distinctly.
 
 Return the optimized resume as a JSON object with the same structure as the input.
+Return ONLY valid JSON, no markdown formatting or explanation."""
+
+TRANSLATE_RESUME_PROMPT = """Translate this resume to {target_language}. Maintain the exact JSON structure and all field names in English. Only translate the content values.
+
+Resume (JSON):
+{resume_json}
+
+Rules:
+- Keep all JSON keys in English (name, contact, experience, etc.)
+- Translate all text content to professional {target_language}
+- Preserve dates, company names, and proper nouns
+- Maintain technical terms that are commonly used in English (e.g., "Python", "AWS")
+
 Return ONLY valid JSON, no markdown formatting or explanation."""

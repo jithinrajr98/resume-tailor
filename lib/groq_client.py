@@ -4,7 +4,7 @@ import json
 import os
 from groq import Groq
 from dotenv import load_dotenv
-from .prompts import STRUCTURE_RESUME_PROMPT, OPTIMIZE_RESUME_PROMPT
+from .prompts import STRUCTURE_RESUME_PROMPT, OPTIMIZE_RESUME_PROMPT, TRANSLATE_RESUME_PROMPT
 
 load_dotenv()
 
@@ -84,6 +84,43 @@ def optimize_resume(resume_json: dict, job_description: str) -> dict:
         model=MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
+        max_tokens=4000,
+    )
+
+    content = response.choices[0].message.content.strip()
+
+    # Handle potential markdown code blocks
+    if content.startswith("```"):
+        content = content.split("```")[1]
+        if content.startswith("json"):
+            content = content[4:]
+        content = content.strip()
+
+    return json.loads(content)
+
+
+def translate_resume(resume_json: dict, target_language: str = "French") -> dict:
+    """
+    Translate resume content to a target language.
+
+    Args:
+        resume_json: Structured resume as a dictionary.
+        target_language: Target language for translation (default: French).
+
+    Returns:
+        Translated resume as a dictionary.
+    """
+    client = get_client()
+
+    prompt = TRANSLATE_RESUME_PROMPT.format(
+        resume_json=json.dumps(resume_json, indent=2),
+        target_language=target_language,
+    )
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.1,
         max_tokens=4000,
     )
 
