@@ -22,7 +22,7 @@ class ResumePDF(FPDF):
 
         # Calculate text start position (after bullet)
         bullet_text = f"{bullet}  "
-        self.set_font("Helvetica", "", 10)
+        self.set_font("Helvetica", "", 11)
         bullet_width = self.get_string_width(bullet_text)
         text_start = indent + bullet_width
 
@@ -58,7 +58,7 @@ class ResumePDF(FPDF):
             contact_parts.append(contact["email"])
 
         if contact_parts:
-            self.set_font("Helvetica", "B", 10)
+            self.set_font("Helvetica", "B", 11)
             contact_line = " | ".join(contact_parts)
             self.cell(0, 6, contact_line, ln=True, align="C")
 
@@ -66,7 +66,7 @@ class ResumePDF(FPDF):
 
     def add_section_title(self, title: str):
         """Add a section title with line extending from text to right margin."""
-        self.set_font("Helvetica", "B", 11)
+        self.set_font("Helvetica", "B", 12)
         self.set_text_color(70, 130, 180)  # Steel blue
 
         # Get the width of the title text
@@ -90,7 +90,7 @@ class ResumePDF(FPDF):
             return
 
         self.add_section_title("Profile")
-        self.set_font("Helvetica", "", 10)
+        self.set_font("Helvetica", "", 11)
         self.multi_cell(0, 5, summary, align="J")
         self.ln(4)
 
@@ -100,7 +100,7 @@ class ResumePDF(FPDF):
             return
 
         self.add_section_title("Technical Skills")
-        self.set_font("Helvetica", "", 10)
+        self.set_font("Helvetica", "", 11)
 
         # Handle both dict (categorized) and list (flat) formats
         if isinstance(skills, dict):
@@ -141,14 +141,14 @@ class ResumePDF(FPDF):
                 parts.append(edu["dates"])
 
             # Bullet and bold degree
-            self.set_font("Helvetica", "B", 10)
+            self.set_font("Helvetica", "B", 11)
             bullet_degree = f"- {degree}"
             degree_width = self.get_string_width(bullet_degree) + 2
             self.cell(degree_width, 6, bullet_degree, ln=False)
 
             # Rest of the line in normal weight
             if parts:
-                self.set_font("Helvetica", "", 10)
+                self.set_font("Helvetica", "", 11)
                 rest = " - " + " | ".join(parts)
                 self.cell(0, 6, rest, ln=True)
             else:
@@ -164,8 +164,13 @@ class ResumePDF(FPDF):
         self.add_section_title("Experience")
 
         for exp in experiences:
+            # Check if enough space for header + at least one bullet
+            min_height_needed = 35
+            if self.get_y() + min_height_needed > self.h - self.b_margin:
+                self.add_page()
+
             # Line 1: Job title (bold)
-            self.set_font("Helvetica", "B", 10)
+            self.set_font("Helvetica", "B", 11)
             self.cell(0, 6, exp.get("title", ""), ln=True)
 
             # Line 2: Company | Type | Location with dates right-aligned
@@ -180,9 +185,9 @@ class ResumePDF(FPDF):
             company_line = " | ".join(company_parts)
             dates = exp.get("dates", "")
 
-            self.set_font("Helvetica", "B", 10)
+            self.set_font("Helvetica", "B", 11)
             self.cell(0, 5, company_line, ln=False)
-            self.set_font("Helvetica", "", 10)
+            self.set_font("Helvetica", "", 11)
             self.cell(0, 5, dates, ln=True, align="R")
 
             self.ln(2)
@@ -202,7 +207,7 @@ class ResumePDF(FPDF):
 
         for project in projects:
             # Project name (bold)
-            self.set_font("Helvetica", "B", 10)
+            self.set_font("Helvetica", "B", 11)
             self.cell(0, 6, project.get("name", ""), ln=True)
 
             # Technologies if present
@@ -215,7 +220,7 @@ class ResumePDF(FPDF):
 
             # Description if present
             if project.get("description"):
-                self.set_font("Helvetica", "", 10)
+                self.set_font("Helvetica", "", 11)
                 self.multi_cell(0, 5, project["description"], align="J")
 
             # Bullet points
@@ -230,7 +235,7 @@ class ResumePDF(FPDF):
             return
 
         self.add_section_title("Certifications")
-        self.set_font("Helvetica", "", 10)
+        self.set_font("Helvetica", "", 11)
 
         for cert in certifications:
             # Format: • Certification Name - Issuer | Date
@@ -252,7 +257,7 @@ class ResumePDF(FPDF):
     def add_references(self, references=None):
         """Add references section."""
         self.add_section_title("References")
-        self.set_font("Helvetica", "", 10)
+        self.set_font("Helvetica", "", 11)
 
         if references and isinstance(references, list) and len(references) > 0:
             # List actual references if provided
