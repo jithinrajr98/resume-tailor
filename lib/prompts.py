@@ -15,6 +15,7 @@ Return a JSON object with these sections (only include sections that exist in th
 - skills: Array of skill strings as a flat list (e.g., ["Python", "JavaScript", "AWS", "Docker"])
 - projects: Array of objects with name, description, technologies, bullets (if present)
 - certifications: Array of objects with name, issuer, date (if present)
+- references: Array of objects with name, title, company, contact (if present in resume)
 
 Return ONLY valid JSON, no markdown formatting or explanation."""
 
@@ -34,12 +35,16 @@ Instructions:
    - Adjusting bullet points to emphasize relevant experience (without fabricating)
    - Incorporating relevant keywords naturally where appropriate
    - Strengthening action verbs and quantifiable achievements
+   - Using diverse vocabulary - avoid repeating words like "demonstrating", "showcasing", "leveraging", "utilizing"; each bullet should use distinct action verbs
+   - Do not use the word "Spearheaded"
 3. Preserve:
    - All factual information (dates, companies, job titles, education, certifications)
    - The overall structure and format
    - Professional tone
+   - References section exactly as provided (do not modify contact information)
 4. Skills must be a flat array of strings, not categorized (e.g., ["Python", "AWS", "Docker"])
 5. Include certifications if present in the original resume
+6. Language quality: Vary action verbs across bullet points. Avoid filler words and repetitive phrasing. Each achievement should read distinctly.
 
 Return the optimized resume as a JSON object with the same structure as the input.
 Return ONLY valid JSON, no markdown formatting or explanation."""

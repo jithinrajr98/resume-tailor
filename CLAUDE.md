@@ -42,7 +42,7 @@ The application follows a linear pipeline:
 - `lib/pdf_generator.py` - `ResumePDF` class handles PDF layout and rendering
 
 ### Resume JSON Schema
-The structured resume format includes: `name`, `professional_title`, `contact`, `summary`, `experience`, `education`, `skills`, `projects`, `certifications`. See `lib/prompts.py` for the full schema definition.
+The structured resume format includes: `name`, `professional_title`, `contact`, `summary`, `experience`, `education`, `skills`, `projects`, `certifications`, `references`. See `lib/prompts.py` for the full schema definition.
 
 ## Deployment
 
