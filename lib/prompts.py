@@ -33,6 +33,7 @@ Instructions:
    - Updating professional_title to match the target job role using standard abbreviations (e.g., "ML Engineer" for machine learning roles, "AI Engineer" for artificial intelligence roles)
    - Reordering skills to prioritize job-relevant ones first (skills should be a flat array of strings)
    - Adjusting bullet points to emphasize relevant experience (without fabricating)
+   - Keeping each bullet point to maximum 2 lines: preserve technical keywords and metrics, remove filler phrases
    - Incorporating relevant keywords naturally where appropriate
    - Strengthening action verbs and quantifiable achievements
    - Using diverse vocabulary - avoid repeating words like "demonstrating", "showcasing", "leveraging", "utilizing"; each bullet should use distinct action verbs
@@ -49,6 +50,7 @@ Instructions:
 Return the optimized resume as a JSON object with the same structure as the input.
 Return ONLY valid JSON, no markdown formatting or explanation."""
 
+
 TRANSLATE_RESUME_PROMPT = """Translate this resume to {target_language}. Maintain the exact JSON structure and all field names in English. Only translate the content values.
 
 Resume (JSON):
@@ -59,5 +61,7 @@ Rules:
 - Translate all text content to professional {target_language}
 - Preserve dates, company names, and proper nouns
 - Maintain technical terms that are commonly used in English (e.g., "Python", "AWS")
+- Keep professional_title and job titles in English (e.g., "ML Engineer", "AI Engineer", "Data Scientist", "Software Engineer", "DevOps Engineer")
+- Keep education degree names in English (e.g., "MSc in data science", "Bachelor of Computer Science", "Master in Management")
 
 Return ONLY valid JSON, no markdown formatting or explanation."""
