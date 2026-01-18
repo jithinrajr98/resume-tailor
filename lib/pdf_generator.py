@@ -125,17 +125,16 @@ class ResumePDF(FPDF):
         self.ln(4)
 
     def add_education(self, education: list):
-        """Add education section with bullet format."""
+        """Add education section with mixed format: two-line for first, single-line for rest."""
         if not education:
             return
 
         self.add_section_title("Education")
 
-        for edu in education:
-            # Build the education line: • Degree - Institution | Location | Dates
+        for idx, edu in enumerate(education):
             degree = edu.get("degree", "")
             if edu.get("field"):
-                degree += f" in {edu['field']}"
+                degree += f" ({edu['field']})"
 
             parts = []
             if edu.get("institution"):
@@ -145,21 +144,28 @@ class ResumePDF(FPDF):
             if edu.get("dates"):
                 parts.append(edu["dates"])
 
-            # Bullet and bold degree
-            self.set_font("DejaVu", "B", 11)
-            bullet_degree = f"- {degree}"
-            degree_width = self.get_string_width(bullet_degree) + 2
-            self.cell(degree_width, 6, bullet_degree, ln=False)
-
-            # Rest of the line in normal weight
-            if parts:
-                self.set_font("DejaVu", "", 11)
-                rest = " - " + " | ".join(parts)
-                self.cell(0, 6, rest, ln=True)
+            if idx == 0:
+                # First entry: two-line format for long degrees
+                self.set_font("DejaVu", "B", 11)
+                self.cell(0, 6, f"- {degree}", ln=True)
+                if parts:
+                    self.set_font("DejaVu", "", 11)
+                    self.set_x(self.l_margin + 7)
+                    self.cell(0, 5, " | ".join(parts), ln=True)
+                self.ln(2)
             else:
-                self.ln(6)
+                # Remaining entries: single-line format to save space
+                self.set_font("DejaVu", "B", 11)
+                bullet_degree = f"- {degree}"
+                degree_width = self.get_string_width(bullet_degree) + 2
+                self.cell(degree_width, 6, bullet_degree, ln=False)
+                if parts:
+                    self.set_font("DejaVu", "", 11)
+                    self.cell(0, 6, " - " + " | ".join(parts), ln=True)
+                else:
+                    self.ln(6)
 
-        self.ln(4)
+        self.ln(2)
 
     def add_experience(self, experiences: list):
         """Add work experience section."""

@@ -122,17 +122,34 @@ if st.session_state.step >= 3 and st.session_state.resume_optimized:
                         except Exception as e:
                             st.error(f"Error translating resume: {str(e)}")
             else:
-                try:
-                    french_pdf_bytes = generate_pdf(st.session_state.resume_french)
-                    st.download_button(
-                        label="Download PDF (French)",
-                        data=french_pdf_bytes,
-                        file_name="Jithin_Reghuvaran_CV_FR.pdf",
-                        mime="application/pdf",
-                        key="french_pdf_download",
+                with st.expander("Edit French Resume (JSON)", expanded=True):
+                    french_json = st.text_area(
+                        "Review and edit the French resume",
+                        value=json.dumps(st.session_state.resume_french, indent=2, ensure_ascii=False),
+                        height=250,
+                        key="french_json_editor",
                     )
-                except Exception as e:
-                    st.error(f"Error generating French PDF: {str(e)}")
+
+                    # Validate JSON on edit
+                    try:
+                        edited_french = json.loads(french_json)
+                        st.session_state.resume_french = edited_french
+                    except json.JSONDecodeError:
+                        st.warning("Invalid JSON format. Please fix the syntax.")
+                        edited_french = None
+
+                if edited_french:
+                    try:
+                        french_pdf_bytes = generate_pdf(st.session_state.resume_french)
+                        st.download_button(
+                            label="Download PDF (French)",
+                            data=french_pdf_bytes,
+                            file_name="Jithin_Reghuvaran_CV_FR.pdf",
+                            mime="application/pdf",
+                            key="french_pdf_download",
+                        )
+                    except Exception as e:
+                        st.error(f"Error generating French PDF: {str(e)}")
 
 # Reset button
 if st.session_state.step > 1:
